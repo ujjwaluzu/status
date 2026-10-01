@@ -21,6 +21,14 @@ export const services: MonitoredService[] = [
     name: "wiki",
     url: "https://ujjwaluzu16.pythonanywhere.com",
   },
+  {
+    name: "CrewLab",
+    url: "https://crewlab.ujjwaluzu.in",
+  },
+  {
+    name: "appCrewlab",
+    url: "https://app.crewlab.ujjwaluzu.in",
+  },
 ];
 
 export function hostOf(url: string): string {
