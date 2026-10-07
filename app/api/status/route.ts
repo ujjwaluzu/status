@@ -1,86 +1,41 @@
-import { services } from "@/lib/services";
+import { getStatusSnapshot } from "@/lib/monitoring";
 import type {
-  CheckedService,
-  OverallStatus,
+  MonitoringErrorCode,
+  StatusErrorResponse,
   StatusResponse,
 } from "@/lib/types";
+import { UptimeRobotError } from "@/lib/uptimerobot";
 
 export const dynamic = "force-dynamic";
 
-const TIMEOUT_MS = 10_000;
+const HEADERS = {
+  "Cache-Control": "no-store",
+  "Content-Type": "application/json",
+  "X-Robots-Tag": "noindex, nofollow",
+} as const;
 
-async function checkService(
-  service: (typeof services)[number]
-): Promise<CheckedService> {
-  const startedAt = performance.now();
+function failureResponse(error: unknown): Response {
+  let code: MonitoringErrorCode = "unexpected";
 
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-    try {
-      const response = await fetch(service.url, {
-        signal: controller.signal,
-        redirect: "follow",
-        headers: { "User-Agent": "ujjwaluzu-status-check/1.0" },
-        cache: "no-store",
-      });
-
-      const responseTime = Math.max(
-        0,
-        Math.round(performance.now() - startedAt)
-      );
-      const reachable = response.ok;
-
-      try {
-        await response.body?.cancel();
-      } catch {
-        // Body already consumed or closed; the reachability check still holds.
-      }
-
-      return {
-        name: service.name,
-        url: service.url,
-        status: reachable ? "up" : "down",
-        responseTime,
-      };
-    } finally {
-      clearTimeout(timeout);
-    }
-  } catch {
-    return {
-      name: service.name,
-      url: service.url,
-      status: "down",
-      responseTime: null,
-    };
+  if (error instanceof UptimeRobotError) {
+    code = error.code;
   }
+
+  const message =
+    code === "not_configured"
+      ? "Monitoring is not configured on this server."
+      : "Unable to retrieve monitoring data.";
+
+  const payload: StatusErrorResponse = { error: { code, message } };
+
+  return Response.json(payload, { status: 503, headers: { ...HEADERS } });
 }
 
 export async function GET() {
-  const checked = await Promise.all(services.map(checkService));
-
-  const downCount = checked.filter((s) => s.status === "down").length;
-  let overall: OverallStatus;
-  if (downCount === 0) {
-    overall = "operational";
-  } else if (downCount < checked.length) {
-    overall = "degraded";
-  } else {
-    overall = "down";
+  try {
+    const payload: StatusResponse = await getStatusSnapshot();
+    return Response.json(payload, { headers: { ...HEADERS } });
+  } catch (error) {
+    return failureResponse(error);
   }
-
-  const payload: StatusResponse = {
-    overall,
-    services: checked,
-    checkedAt: new Date().toISOString(),
-  };
-
-  return Response.json(payload, {
-    headers: {
-      "Cache-Control": "no-store",
-      "Content-Type": "application/json",
-      "X-Robots-Tag": "noindex, nofollow",
-    },
-  });
 }
