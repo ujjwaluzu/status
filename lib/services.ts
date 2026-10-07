@@ -29,6 +29,10 @@ export const services: MonitoredService[] = [
     name: "appCrewlab",
     url: "https://app.crewlab.ujjwaluzu.in",
   },
+  {
+    name: "Tools",
+    url: "https://tools.ujjwaluzu.in",
+  },
 ];
 
 export function hostOf(url: string): string {
