@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { StatusDashboard } from "@/components/status-dashboard";
 
@@ -12,7 +13,14 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <span className="brand__name">ujjwaluzu</span>
+            <Image
+              className="brand__logo"
+              src="/favicon_io/android-chrome-192x192.png"
+              width={192}
+              height={192}
+              alt="ujjwaluzu"
+              priority
+            />
           </a>
 
           <nav className="nav" aria-label="Primary">
@@ -23,13 +31,6 @@ export default function Home() {
             >
               Status
             </Link>
-            <span
-              className="nav__item nav__item--muted"
-              aria-disabled="true"
-              title="Historical monitoring is not available yet"
-            >
-              History
-            </span>
             <a
               className="nav__item"
               href="https://ujjwaluzu.in"

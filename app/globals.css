@@ -123,11 +123,10 @@ a {
   opacity: 0.8;
 }
 
-.brand__name {
-  font-size: 13.5px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--text);
+.brand__logo {
+  display: block;
+  width: 28px;
+  height: 28px;
 }
 
 .nav {
@@ -160,15 +159,6 @@ a {
   bottom: -1px;
   height: 1.5px;
   background: var(--green);
-}
-
-.nav__item--muted {
-  color: var(--text-muted);
-  cursor: default;
-}
-
-.nav__item--muted:hover {
-  color: var(--text-muted);
 }
 
 /* ---------- Main ---------- */
@@ -737,10 +727,6 @@ a {
 }
 
 @media (max-width: 480px) {
-  .nav__item--muted {
-    display: none;
-  }
-
   .summary {
     grid-template-columns: 1fr;
   }
