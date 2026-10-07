@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { StatusDashboard } from "@/components/status-dashboard";
 
 export default function Home() {
@@ -13,7 +14,31 @@ export default function Home() {
           >
             <span className="brand__name">ujjwaluzu</span>
           </a>
-          <span className="site-header__host">status.ujjwaluzu.in</span>
+
+          <nav className="nav" aria-label="Primary">
+            <Link
+              className="nav__item nav__item--active"
+              href="/"
+              aria-current="page"
+            >
+              Status
+            </Link>
+            <span
+              className="nav__item nav__item--muted"
+              aria-disabled="true"
+              title="Historical monitoring is not available yet"
+            >
+              History
+            </span>
+            <a
+              className="nav__item"
+              href="https://ujjwaluzu.in"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Visit site <span aria-hidden="true">↗</span>
+            </a>
+          </nav>
         </div>
       </header>
 

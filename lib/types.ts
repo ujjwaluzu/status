@@ -12,6 +12,12 @@ export interface CheckedService extends MonitoredService {
 
 export type OverallStatus = "operational" | "degraded" | "down";
 
+export interface CheckResult {
+  status: ServiceStatus;
+  timestamp: number;
+  responseTime: number | null;
+}
+
 export interface StatusResponse {
   overall: OverallStatus;
   services: CheckedService[];
